@@ -1,0 +1,51 @@
+sequenceDiagram
+    participant Frontend as Frontend (http://localhost:3000)
+    participant Gateway as Gateway (http://localhost:8084)
+    participant PrApi as Pruebas.API (http://localhost:8082)
+    participant Controller as PruebasController
+    participant DB as PostgreSQL (pruebasdb)
+    participant DistSvc as DistanceAPIInfoService
+    participant DistAPI as distance.api (http://localhost:8081)
+    participant CheckSvc as checkPosicionVehiculoService
+    participant IncRepo as IncidenciaRepository
+    participant NotifSvc as NotificacionService
+    participant Keycloak as Identity.Provider (Keycloak, http://localhost:8080)
+    participant NotifAPI as Notificaciones.API (http://localhost:8083)
+
+    Frontend->>Gateway: POST /pruebas/check-posicion-vehiculo (Origin header)
+    Gateway->>PrApi: POST /pruebas/check-posicion-vehiculo
+    PrApi->>Controller: entran datos PosicionDTO
+    Controller->>DB: SELECT prueba en curso por vehiculo
+    DB-->>Controller: prueba existente
+    Controller->>DistSvc: getInfo()
+    DistSvc->>DistAPI: GET /info (allowed radius, restricted zones)
+    DistAPI-->>DistSvc: {allowedRadius, restrictedZones}
+    DistSvc-->>Controller: distanceAPIData
+    Controller->>DB: INSERT nueva Posicion
+    DB-->>Controller: nuevaPosicion
+    Controller->>CheckSvc: checkPosicionVehiculoService(nuevaPosicion, interesado, prueba, distanceAPIData)
+
+    alt Vehículo DENTRO del área permitida
+        CheckSvc->>CheckSvc: calcular distancia -> dentro
+        CheckSvc-->>Controller: OK (ninguna acción adicional)
+        Controller-->>Frontend: 200 OK (posicion aceptada)
+    else Vehículo FUERA del área permitida / zona restringida
+        CheckSvc->>CheckSvc: calcular distancia -> OUT_OF_ALLOWED_AREA
+        CheckSvc->>IncRepo: INSERT incidencia (vehiculo, mensaje, id_prueba, ... )
+        IncRepo-->>CheckSvc: incidencia guardada
+        CheckSvc->>DB: UPDATE interesado SET restringido = true
+        DB-->>CheckSvc: interesado actualizado
+        CheckSvc->>NotifSvc: solicitar envio de notificación (interesado, incidencia)
+        
+        %% Token flow for notification service (client credentials)
+        NotifSvc->>Keycloak: POST /realms/carsellingrealm/protocol/openid-connect/token
+            Note right of Keycloak: grant_type=client_credentials\nclient_id=carsellingclientserviceaccount\nclient_secret=...
+        Keycloak-->>NotifSvc: { access_token }
+        
+        NotifSvc->>NotifAPI: POST /notificaciones/enviar-notificaciones\nAuthorization: Bearer <access_token>\npayload: {interesado, incidencia}
+        NotifAPI-->>NotifSvc: 200 OK / accepted
+        NotifSvc-->>CheckSvc: notificación enviada OK
+
+        CheckSvc-->>Controller: throw Excepción / devuelve resultado con error
+        Controller-->>Frontend: 400 BAD REQUEST (Vehículo fuera de área / incidente generado)
+    end

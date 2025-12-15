@@ -1,0 +1,99 @@
+services:
+  pruebas.db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pruebasdb
+    volumes:
+      - ./init_pruebas.sql:/docker-entrypoint-initdb.d/init_pruebas.sql
+      #- postgres_data:/var/lib/postgresql/data # Persist data
+    ports:
+      - "5432:5432"
+    networks:
+      - carselling
+  notificaciones.db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: notificacionesdb
+    volumes:
+      - ./init_notificaciones.sql:/docker-entrypoint-initdb.d/init_notificaciones.sql
+      #- postgres_notificaciones_data:/var/lib/postgresql/data # Persist data
+    ports:
+      - "5434:5432"
+    networks:
+      - carselling
+  distance.api:
+    build: ./distance.api
+    image: distance.api:latest
+    ports:
+      - "8081:8081"
+    networks:
+      - carselling
+  pruebas.api:
+    build:
+      context: ./pruebas
+      dockerfile: dockerfile
+    image: pruebas.api:latest
+    ports:
+      - "8082:8082"
+    networks:
+      - carselling
+    environment:
+      - IDENTITY_PROVIDER_URL=http://identity.provider:8080
+      - NOTIFICACIONES_API_URL=http://notificaciones.api:8083
+      - NOTIFICACIONES_API_SERVICE=/notificaciones/enviar-notificaciones
+      - DISTANCE_API_URL=http://distance.api:8081
+      - DISTANCE_API_SERVICE=/info
+      - PRUEBAS_API_URL=http://pruebas.api:8082
+      - DB_URL=jdbc:postgresql://pruebas.db:5432/pruebasdb
+      - DB_USERNAME=appuser
+      - DB_PASSWORD=password
+  notificaciones.api:
+    build: ./notificaciones
+    image: notificaciones:latest
+    ports:
+      - "8083:8083"
+    networks:
+      - carselling
+    environment:
+      - IDENTITY_PROVIDER_URL=http://identity.provider:8080
+      - NOTIFICACIONES_API_URL=http://notificaciones.api:8083
+      - NOTIFICACIONES_API_SERVICE=/notificaciones/enviar-notificaciones
+      - DISTANCE_API_URL=http://distance.api:8081
+      - DISTANCE_API_SERVICE=/info
+      - PRUEBAS_API_URL=http://pruebas.api:8082
+      - DB_URL=jdbc:postgresql://notificaciones.db:5432/notificacionesdb
+      - DB_USERNAME=appuser
+      - DB_PASSWORD=password
+  gateway:
+    build: ./gateway
+    image: gateway:latest
+    ports:
+      - "8084:8084"
+    networks:
+      - carselling
+    environment:            
+      - NOTIFICACIONES_API_URL=http://notificaciones.api:8083      
+      - PRUEBAS_API_URL=http://pruebas.api:8082
+  identity.provider:
+    build: ./keycloak
+    image: identity.provider:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - carselling
+  carselling.client:
+    build: ./carselling.client
+    image: carselling.client:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - carselling
+    
+      
+networks:
+  carselling:
+    driver: bridge

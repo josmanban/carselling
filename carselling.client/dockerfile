@@ -1,0 +1,17 @@
+FROM node:24-alpine AS base
+
+WORKDIR /app
+
+COPY package.json package-lock.json* .npmrc* ./
+COPY eslint.config.mjs ./
+COPY next.config.ts ./
+COPY next-env.d.ts ./
+COPY tsconfig.json ./
+COPY public ./public
+COPY src ./src
+COPY app ./app
+RUN npm install
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
+
+

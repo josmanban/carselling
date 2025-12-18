@@ -7,11 +7,13 @@ Ejecutar la infraestructura de microservicios con el comando
 docker compose up
 ```
 
+Agregar "identity.provider" a la lista de hostsnames en /etc/hosts
+
 ---
 
 ## Diagrama: flujo `/pruebas/check-posicion-vehiculo` ✅
 A continuación se muestra el diagrama de secuencia cuando el vehículo está fuera del área permitida (se genera una incidencia y se envía una notificación):
 
-![Diagrama: check_posicion_vehiculo](docs/check_posicion_vehiculo.png)
+![Diagrama: check_posicion_vehiculo](diagrams/check_posicion_vehiculo.png)
 
 Fuente (Mermaid): `diagrams/check_posicion_vehiculo.mmd`

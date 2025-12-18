@@ -1,0 +1,28 @@
+graph TD
+    A[carselling.client] --> B[gateway]
+    B --> C[pruebas.api]
+    B --> D[notificaciones.api]
+    C --> E[identity.provider]
+    C --> D
+    C --> F[distance.api]
+    C --> G[pruebas.db]
+    D --> E
+    D --> F
+    D --> H[notificaciones.db]
+    
+    subgraph "Databases"
+        G
+        H
+    end
+    
+    subgraph "Microservices"
+        C
+        D
+        F
+    end
+    
+    subgraph "Infrastructure"
+        E
+        B
+        A
+    end

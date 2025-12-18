@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json package-lock.json* .npmrc* ./
 COPY eslint.config.mjs ./
 COPY next.config.ts ./
-COPY next-env.d.ts ./
+#COPY next-env.d.ts ./
 COPY tsconfig.json ./
 COPY public ./public
 COPY src ./src

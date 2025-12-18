@@ -50,6 +50,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import car.selling.pruebas.services.VehiculoService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Map;   
@@ -63,7 +65,7 @@ public class PruebasController {
     private final PruebaRepository pruebaRepository;
     private final EmpleadoRepository empleadoRepository;
     private final PosicionRepository posicionRepository;
-    private final VehiculoRepository vehiculoRepository;
+    private final VehiculoService vehiculoService;
     
     private final PruebaService pruebaService;
     private final DistanceAPIInfoService distanceAPIInfoService;
@@ -74,7 +76,7 @@ public class PruebasController {
         EmpleadoRepository empleadoRepository, 
         InteresadoRepository interesadoRepository,         
         PosicionRepository posicionRepository,
-        VehiculoRepository vehiculoRepository,
+        VehiculoService vehiculoService,
         PruebaService pruebaService,
         DistanceAPIInfoService distanceAPIInfoService,
         NotificacionService notificacionService
@@ -83,7 +85,7 @@ public class PruebasController {
         this.empleadoRepository = empleadoRepository;        
         this.interesadoRepository = interesadoRepository;        
         this.posicionRepository = posicionRepository;
-        this.vehiculoRepository = vehiculoRepository;
+        this.vehiculoService = vehiculoService;
         this.pruebaService = pruebaService;
         this.distanceAPIInfoService = distanceAPIInfoService;
         this.notificacionService = notificacionService;
@@ -103,7 +105,7 @@ public class PruebasController {
     public Prueba registrarPrueba(@RequestBody PruebaDTO entity, @AuthenticationPrincipal Jwt jwt) {        
         
         int vehiculoId = entity.vehiculoId;
-        Vehiculo vehiculo = vehiculoRepository.findById(vehiculoId);
+        Vehiculo vehiculo = vehiculoService.findById(vehiculoId);
         if (vehiculo == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No se encontró el vehículo");
         }
@@ -256,7 +258,7 @@ public class PruebasController {
     public List<Prueba> getPruebaByVehiculo(@RequestParam(required = false) Integer vehiculoId) {
         List<Prueba> pruebas;
         if (vehiculoId != null) {
-            Vehiculo vehiculo = this.vehiculoRepository.findById(vehiculoId);
+            Vehiculo vehiculo = this.vehiculoService.findById(vehiculoId);
             if (vehiculo == null) {
                 throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,

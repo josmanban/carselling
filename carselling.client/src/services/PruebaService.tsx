@@ -49,7 +49,7 @@ export default function PruebaService() {
         return await doAuthenticatedPost(actualizarPosicionVehiculoUrl(), data);
     }
 
-    const getPruebasPorVehiculo = async (vehiculoId: number) => {
+    const getPruebasPorVehiculo = async (vehiculoId: number|undefined) => {
         return await doAuthenticatedGet(getPruebasPorVehiculoUrl(vehiculoId));
     }
 

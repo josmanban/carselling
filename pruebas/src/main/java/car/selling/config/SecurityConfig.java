@@ -64,7 +64,7 @@ public class SecurityConfig {
                 .requestMatchers("/vehiculos/**").hasAnyRole("empleado","admin")
                 .requestMatchers("/interesados/**").hasAnyRole("empleado","admin")
                 .requestMatchers("/empleados/**").hasAnyRole("admin","empleado")
-                //.requestMatchers("/notificasiones/enviar-notificaciones").hasAnyRole("empleado","interesado")
+                .requestMatchers("/modelos/**").hasAnyRole("admin","empleado","interesado")
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2

@@ -51,6 +51,7 @@ import car.selling.pruebas.repositories.VehiculoRepository;
 import car.selling.pruebas.services.DistanceAPIInfoService;
 import car.selling.pruebas.services.NotificacionService;
 import car.selling.pruebas.services.PruebaService;
+import car.selling.pruebas.services.VehiculoService;
 
 import java.util.Map;
 import java.util.List;
@@ -87,6 +88,8 @@ public class PruebaControllerTest {
 
     @Autowired
     private PruebaService pruebaService;
+    @Autowired
+    private VehiculoService vehiculoService;
 
     @MockBean
     private DistanceAPIInfoService distanceAPIInfoService;

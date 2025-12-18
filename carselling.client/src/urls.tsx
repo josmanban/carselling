@@ -6,15 +6,31 @@ const VEHICULOS_API_URL = "http://localhost:8084/vehiculos";
 const EMPLEADOS_API_URL = "http://localhost:8084/empleados";
 const INTERESADOS_API_URL = "http://localhost:8084/interesados";
 const NOTIFICACIONES_API_URL = "http://localhost:8084/notificaciones";
+const MODELOS_API_URL = "http://localhost:8084/modelos";
 
+export function ModelosApiUrls(){
+
+    const getModelosUrl = () => {
+        return MODELOS_API_URL;
+    };
+
+    return {
+        getModelosUrl
+    };
+}
 
 export function VehiculosApiUrls(){
+
+    const registarVehiculoUrl = () => {
+        return VEHICULOS_API_URL;
+    }
 
     const getVehiculosUrl = () => {
         return VEHICULOS_API_URL;
     };
 
     return {
+        registarVehiculoUrl,
         getVehiculosUrl
     };
 }

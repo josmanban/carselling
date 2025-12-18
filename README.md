@@ -11,6 +11,10 @@ Agregar "identity.provider" a la lista de hostsnames en /etc/hosts
 
 ---
 
+## Arquitectura
+![Diagrama: arquitectura_microservicios](diagrams/arquitectura_microservicios.jpg)
+
+
 ## Diagrama: flujo `/pruebas/check-posicion-vehiculo` ✅
 A continuación se muestra el diagrama de secuencia cuando el vehículo está fuera del área permitida (se genera una incidencia y se envía una notificación):
 

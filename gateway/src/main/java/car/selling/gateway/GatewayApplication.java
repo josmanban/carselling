@@ -40,6 +40,10 @@ public class GatewayApplication {
 				.uri(pruebasApiUrl)
 			)
 			.route( p-> p
+				.path("/modelos/**")
+				.uri(pruebasApiUrl)
+			)
+			.route( p-> p
 				.path("/empleados/**")
 				.uri(pruebasApiUrl)
 			)

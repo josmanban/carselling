@@ -143,6 +143,21 @@ export default function SideMenu(){
                     </Link>
                   </ListItemButton>
                 </ListItem>
+                <ListItem key={4} disablePadding>
+                  <ListItemButton>                    
+                    <Link
+                        color="inherit"
+                        underline="none"
+                        href="#"                        
+                        onClick={(e) => {
+                          e.preventDefault();
+                          push("/logedIn/vehiculos");
+                        }}
+                        >
+                          <span>Vehiculos</span>
+                    </Link>
+                  </ListItemButton>
+                </ListItem>
             </>
             }
             <Divider />

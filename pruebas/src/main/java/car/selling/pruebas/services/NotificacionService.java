@@ -54,7 +54,7 @@ public class NotificacionService {
 
         String token = clientCredentialsService.getAccessToken();        
 
-        String body = "{\"mensaje\":\""+mensaje+"\",\"telefonos\":\""+telefonoContacto+"\"}";
+        String body = "{\"mensaje\":\""+mensaje+"\",\"telefonos\":[\""+telefonoContacto+"\"]}";
 
 
         String response = WebClient.create()
